@@ -1,18 +1,18 @@
 # -------------------------------------------------------------------------------
-#   This file is part of Ranger.
+#   This file is part of Spruce.
 #
-# Ranger is free software: you can redistribute it and/or modify
+# Spruce is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Ranger is distributed in the hope that it will be useful,
+# Spruce is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Ranger. If not, see <http://www.gnu.org/licenses/>.
+# along with Spruce. If not, see <http://www.gnu.org/licenses/>.
 #
 # Written by:
 #
@@ -26,7 +26,7 @@
 # http://www.imbs-luebeck.de
 # -------------------------------------------------------------------------------
 
-##' Ranger is a fast implementation of random forests (Breiman 2001) or recursive partitioning, particularly suited for high dimensional data.
+##' Spruce is a fast implementation of random forests (Breiman 2001) or recursive partitioning, particularly suited for high dimensional data.
 ##' Classification, regression, and survival forests are supported.
 ##' Classification and regression forests are implemented as in the original Random Forest (Breiman 2001), survival forests as in Random Survival Forests (Ishwaran et al. 2008).
 ##' Includes implementations of extremely randomized trees (Geurts et al. 2006) and quantile regression forests (Meinshausen 2006). 
@@ -65,17 +65,17 @@
 ##' This importance measure can be combined with the methods to estimate p-values in \code{\link{importance_pvalues}}. 
 ##' We recommend not to use the 'impurity_corrected' importance when making predictions since the feature permutation step might reduce predictive performance (a warning is raised when predicting on new data). 
 ##'
-##' Note that ranger has different default values than other packages.
+##' Note that spruce has different default values than other packages.
 ##' For example, our default for \code{mtry} is the square root of the number of variables for all tree types, whereas other packages use different values for regression.
 ##' Also, changing one hyperparameter does not change other hyperparameters (where possible). 
 ##' For example, \code{splitrule="extratrees"} uses randomized splitting but does not disable bagging as in Geurts et al. (2006).
 ##' To disable bagging, use \code{replace = FALSE, sample.fraction = 1}. 
-##' This can also be used to grow a single decision tree without bagging and feature subsetting: \code{ranger(..., num.trees = 1, mtry = p, replace = FALSE, sample.fraction = 1)}, where p is the number of independent variables.
+##' This can also be used to grow a single decision tree without bagging and feature subsetting: \code{spruce(..., num.trees = 1, mtry = p, replace = FALSE, sample.fraction = 1)}, where p is the number of independent variables.
 ##'
 ##' While random forests are known for their robustness, default hyperparameters not always work well. 
 ##' For example, for high dimensional data, increasing the \code{mtry} value and the number of trees \code{num.trees} is recommended. 
 ##' For more details and recommendations, see Probst et al. (2019). 
-##' To find the best hyperparameters, consider hyperparameter tuning with the \code{tuneRanger} or \code{mlr3} packages.
+##' To find the best hyperparameters, consider hyperparameter tuning with the \code{tuneSpruce} or \code{mlr3} packages.
 ##' 
 ##' Out-of-bag prediction error is calculated as accuracy (proportion of misclassified observations) for classification, as Brier score for probability estimation, as mean squared error (MSE) for regression and as one minus Harrell's C-index for survival.
 ##' Harrell's C-index is calculated based on the sum of the cumulative hazard function (CHF) over all timepoints, i.e., \code{rowSums(chf)}, where \code{chf} is the the out-of-bag CHF; for details, see Ishwaran et al. (2008).
@@ -94,24 +94,24 @@
 ##' Use \code{x} and \code{y} with a matrix for \code{x} to avoid conversions and save memory.
 ##' Consider setting \code{save.memory = TRUE} if you encounter memory problems for very large datasets, but be aware that this option slows down the tree growing. 
 ##' 
-##' For GWAS data consider combining \code{ranger} with the \code{GenABEL} package. 
+##' For GWAS data consider combining \code{spruce} with the \code{GenABEL} package. 
 ##' See the Examples section below for a demonstration using \code{Plink} data.
 ##' All SNPs in the \code{GenABEL} object will be used for splitting. 
 ##' To use only the SNPs without sex or other covariates from the phenotype file, use \code{0} on the right hand side of the formula. 
 ##' Note that missing values are treated as an extra category while splitting.
 ##' 
-##' By default, ranger uses 2 threads. The default can be changed with: (1) \code{num.threads} in ranger/predict call, (2) environment variable
-##' R_RANGER_NUM_THREADS, (3) \code{options(ranger.num.threads = N)}, (4) \code{options(Ncpus = N)}, with precedence in that order.
+##' By default, spruce uses 2 threads. The default can be changed with: (1) \code{num.threads} in spruce/predict call, (2) environment variable
+##' R_RANGER_NUM_THREADS, (3) \code{options(spruce.num.threads = N)}, (4) \code{options(Ncpus = N)}, with precedence in that order.
 ##' 
-##' See \url{https://github.com/imbs-hl/ranger} for the development version.
+##' See \url{https://github.com/imbs-hl/spruce} for the development version.
 ##' 
-##' @title Ranger
+##' @title Spruce
 ##' @param formula Object of class \code{formula} or \code{character} describing the model to fit. Interaction terms supported only for numerical variables.
 ##' @param data Training data of class \code{data.frame}, \code{matrix}, \code{dgCMatrix} (Matrix) or \code{gwaa.data} (GenABEL).
 ##' @param num.trees Number of trees.
 ##' @param mtry Number of variables to possibly split at in each node. Default is the (rounded down) square root of the number variables. Alternatively, a single argument function returning an integer, given the number of independent variables.
 ##' @param importance Variable importance mode, one of 'none', 'impurity', 'impurity_corrected', 'permutation'. The 'impurity' measure is the Gini index for classification, the variance of the responses for regression and the sum of test statistics (see \code{splitrule}) for survival. 
-##' @param write.forest Save \code{ranger.forest} object, required for prediction. Set to \code{FALSE} to reduce memory usage if no prediction intended.
+##' @param write.forest Save \code{spruce.forest} object, required for prediction. Set to \code{FALSE} to reduce memory usage if no prediction intended.
 ##' @param probability Grow a probability forest as in Malley et al. (2012). 
 ##' @param min.node.size Minimal node size to split at. Default 1 for classification, 5 for regression, 3 for survival, and 10 for probability. For classification, this can be a vector of class-specific values. 
 ##' @param min.bucket Minimal terminal node size. No nodes smaller than this value can occur. Default 3 for survival and 1 for all other tree types. For classification, this can be a vector of class-specific values. 
@@ -153,7 +153,7 @@
 ##' @param x Predictor data (independent variables), alternative interface to data with formula or dependent.variable.name.
 ##' @param y Response vector (dependent variable), alternative interface to data with formula or dependent.variable.name. For survival use a \code{Surv()} object or a matrix with time and status.
 ##' @param ... Further arguments passed to or from other methods (currently ignored).
-##' @return Object of class \code{ranger} with elements
+##' @return Object of class \code{spruce} with elements
 ##'   \item{\code{forest}}{Saved forest (If write.forest set to TRUE). Note that the variable IDs in the \code{split.varIDs} object do not necessarily represent the column number in R.}
 ##'   \item{\code{predictions}}{Predicted classes/values, based on out-of-bag samples (classification and regression only).}
 ##'   \item{\code{variable.importance}}{Variable importance for each independent variable.}
@@ -177,33 +177,33 @@
 ##'   \item{\code{status.variable.name}}{Name of the status variable (survival only). This is NULL when x/y interface is used.}
 ##' @examples
 ##' ## Classification forest with default settings
-##' ranger(Species ~ ., data = iris)
+##' spruce(Species ~ ., data = iris)
 ##'
 ##' ## Prediction
 ##' train.idx <- sample(nrow(iris), 2/3 * nrow(iris))
 ##' iris.train <- iris[train.idx, ]
 ##' iris.test <- iris[-train.idx, ]
-##' rg.iris <- ranger(Species ~ ., data = iris.train)
+##' rg.iris <- spruce(Species ~ ., data = iris.train)
 ##' pred.iris <- predict(rg.iris, data = iris.test)
 ##' table(iris.test$Species, pred.iris$predictions)
 ##' 
 ##' ## Quantile regression forest
-##' rf <- ranger(mpg ~ ., mtcars[1:26, ], quantreg = TRUE)
+##' rf <- spruce(mpg ~ ., mtcars[1:26, ], quantreg = TRUE)
 ##' pred <- predict(rf, mtcars[27:32, ], type = "quantiles")
 ##' pred$predictions
 ##'
 ##' ## Variable importance
-##' rg.iris <- ranger(Species ~ ., data = iris, importance = "impurity")
+##' rg.iris <- spruce(Species ~ ., data = iris, importance = "impurity")
 ##' rg.iris$variable.importance
 ##'
 ##' ## Survival forest
 ##' require(survival)
-##' rg.veteran <- ranger(Surv(time, status) ~ ., data = veteran)
+##' rg.veteran <- spruce(Surv(time, status) ~ ., data = veteran)
 ##' plot(rg.veteran$unique.death.times, rg.veteran$survival[1,])
 ##'
 ##' ## Alternative interfaces (same results)
-##' ranger(dependent.variable.name = "Species", data = iris)
-##' ranger(y = iris[, 5], x = iris[, -5])
+##' spruce(dependent.variable.name = "Species", data = iris)
+##' spruce(y = iris[, 5], x = iris[, -5])
 ##' 
 ##' \dontrun{
 ##' ## Use GenABEL interface to read Plink data into R and grow a classification forest
@@ -212,13 +212,13 @@
 ##' convert.snp.ped("data.ped", "data.map", "data.raw")
 ##' dat.gwaa <- load.gwaa.data("data.pheno", "data.raw")
 ##' phdata(dat.gwaa)$trait <- factor(phdata(dat.gwaa)$trait)
-##' ranger(trait ~ ., data = dat.gwaa)
+##' spruce(trait ~ ., data = dat.gwaa)
 ##' }
 ##'
 ##' @author Marvin N. Wright
 ##' @references
 ##' \itemize{
-##'   \item Wright, M. N. & Ziegler, A. (2017). ranger: A fast implementation of random forests for high dimensional data in C++ and R. J Stat Softw 77:1-17. \doi{10.18637/jss.v077.i01}.
+##'   \item Wright, M. N. & Ziegler, A. (2017). spruce: A fast implementation of random forests for high dimensional data in C++ and R. J Stat Softw 77:1-17. \doi{10.18637/jss.v077.i01}.
 ##'   \item Schmid, M., Wright, M. N. & Ziegler, A. (2016). On the use of Harrell's C for clinical risk prediction via random survival forests. Expert Syst Appl 63:450-459. \doi{10.1016/j.eswa.2016.07.018}. 
 ##'   \item Wright, M. N., Dankowski, T. & Ziegler, A. (2017). Unbiased split variable selection for random survival forests using maximally selected rank statistics. Stat Med 36:1272-1284. \doi{10.1002/sim.7212}.
 ##'   \item Nembrini, S., Koenig, I. R. & Wright, M. N. (2018). The revival of the Gini Importance? Bioinformatics. \doi{10.1093/bioinformatics/bty373}.
@@ -233,14 +233,14 @@
 ##'   \item Deng & Runger (2012). Feature selection via regularized trees. The 2012 International Joint Conference on Neural Networks (IJCNN), Brisbane, Australia. \doi{10.1109/IJCNN.2012.6252640}.
 ##'   \item Probst, P., Wright, M. N. & Boulesteix, A-L. (2019). Hyperparameters and tuning strategies for random forest. WIREs Data Mining Knowl Discov 9:e1301.\doi{10.1002/widm.1301}.
 ##'   }
-##' @seealso \code{\link{predict.ranger}}
-##' @useDynLib ranger, .registration = TRUE
+##' @seealso \code{\link{predict.spruce}}
+##' @useDynLib spruce, .registration = TRUE
 ##' @importFrom Rcpp evalCpp
 ##' @import stats 
 ##' @import utils
 ##' @importFrom Matrix Matrix
 ##' @export
-ranger <- function(formula = NULL, data = NULL, num.trees = 500, mtry = NULL,
+spruce <- function(formula = NULL, data = NULL, num.trees = 500, mtry = NULL,
                    importance = "none", write.forest = TRUE, probability = FALSE,
                    min.node.size = NULL, min.bucket = NULL, max.depth = NULL, 
                    replace = TRUE, sample.fraction = ifelse(replace, 1, 0.632), 
@@ -307,7 +307,7 @@ ranger <- function(formula = NULL, data = NULL, num.trees = 500, mtry = NULL,
         stop("Error: Invalid formula.")
       }
       if (ncol(data) > 10000) {
-        warning("Avoid the formula interface for high-dimensional data. If ranger is slow or you get a 'protection stack overflow' error, consider the x/y or dependent.variable.name interface (see examples).")
+        warning("Avoid the formula interface for high-dimensional data. If spruce is slow or you get a 'protection stack overflow' error, consider the x/y or dependent.variable.name interface (see examples).")
       }
       data.selected <- parse.formula(formula, data, env = parent.frame())
       dependent.variable.name <- all.vars(formula)[1]
@@ -562,7 +562,7 @@ ranger <- function(formula = NULL, data = NULL, num.trees = 500, mtry = NULL,
   ## Num threads
   ## Default 0 -> detect from system in C++.
   if (is.null(num.threads)) {
-    num.threads <- as.integer(Sys.getenv("R_RANGER_NUM_THREADS", getOption("ranger.num.threads", getOption("Ncpus", 2L))))
+    num.threads <- as.integer(Sys.getenv("R_RANGER_NUM_THREADS", getOption("spruce.num.threads", getOption("Ncpus", 2L))))
   } else if (!is.numeric(num.threads) || num.threads < 0) {
     stop("Error: Invalid value for num.threads")
   }
@@ -974,7 +974,7 @@ ranger <- function(formula = NULL, data = NULL, num.trees = 500, mtry = NULL,
     }
   }
   
-  ## Prediction mode always false. Use predict.ranger() method.
+  ## Prediction mode always false. Use predict.spruce() method.
   prediction.mode <- FALSE
   predict.all <- FALSE
   prediction.type <- 1
@@ -1014,8 +1014,8 @@ ranger <- function(formula = NULL, data = NULL, num.trees = 500, mtry = NULL,
     }
   }
   
-  ## Call Ranger
-  result <- rangerCpp(treetype, x, y.mat, independent.variable.names, mtry,
+  ## Call Spruce
+  result <- spruceCpp(treetype, x, y.mat, independent.variable.names, mtry,
                       num.trees, verbose, seed, num.threads, write.forest, importance.mode,
                       min.node.size, min.bucket, split.select.weights, use.split.select.weights,
                       always.split.variables, use.always.split.variables,
@@ -1120,7 +1120,7 @@ ranger <- function(formula = NULL, data = NULL, num.trees = 500, mtry = NULL,
     }
     result$forest$independent.variable.names <- independent.variable.names
     result$forest$treetype <- result$treetype
-    class(result$forest) <- "ranger.forest"
+    class(result$forest) <- "spruce.forest"
     
     ## Save covariate levels
     if (!is.null(covariate.levels)) {
@@ -1138,7 +1138,7 @@ ranger <- function(formula = NULL, data = NULL, num.trees = 500, mtry = NULL,
     result$max.depth <- max.depth
   }
   
-  class(result) <- "ranger"
+  class(result) <- "spruce"
   
   ## Prepare quantile prediction
   if (quantreg) {
