@@ -73,7 +73,7 @@ largest.quantile <- function(formula) {
   names(sort(quantiles))
 }
 
-# Convert ranger object from version <0.11.5 (without x/y interface)
+# Convert spruce object from version <0.11.5 (without x/y interface)
 convert.pre.xy <- function(forest, trees = 1:forest$num.trees) {
   if (is.null(forest$status.varID)) {
     # Not survival

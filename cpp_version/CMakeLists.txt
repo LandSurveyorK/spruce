@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(ranger)
+project(spruce)
 include (GNUInstallDirs)
 
 ## ======================================================================================##
@@ -55,28 +55,28 @@ if (MSVC)
   list(APPEND SOURCES src/getopt/getopt.c)
 endif ()
 option(BUILD_SHARED_LIBS "shared/static lib" OFF)
-add_library(ranger ${SOURCES})
-target_include_directories(ranger PUBLIC src/utility src/Forest src/Tree src)
+add_library(spruce ${SOURCES})
+target_include_directories(spruce PUBLIC src/utility src/Forest src/Tree src)
 if (MSVC)
-  target_include_directories(ranger PRIVATE src/getopt)
+  target_include_directories(spruce PRIVATE src/getopt)
 endif ()
-target_link_libraries(ranger Threads::Threads)
-install(TARGETS ranger RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+target_link_libraries(spruce Threads::Threads)
+install(TARGETS spruce RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
                        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
                        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 file(GLOB_RECURSE HEADERS src/*.h)
-install (FILES ${HEADERS} DESTINATION include/ranger)
+install (FILES ${HEADERS} DESTINATION include/spruce)
 
 ## ======================================================================================##
 ## Executable
 ## ======================================================================================##
-add_executable(ranger-cli src/main.cpp)
-set_target_properties(ranger-cli PROPERTIES OUTPUT_NAME ranger)
-target_link_libraries(ranger-cli ranger)
-install(TARGETS ranger-cli DESTINATION ${CMAKE_INSTALL_BINDIR})
+add_executable(spruce-cli src/main.cpp)
+set_target_properties(spruce-cli PROPERTIES OUTPUT_NAME spruce)
+target_link_libraries(spruce-cli spruce)
+install(TARGETS spruce-cli DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 ## ======================================================================================##
 ## Test
 ## ======================================================================================##
 enable_testing()
-add_test(NAME help COMMAND ranger --help)
+add_test(NAME help COMMAND spruce --help)

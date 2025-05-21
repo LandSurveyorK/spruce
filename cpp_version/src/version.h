@@ -1,3 +1,3 @@
-#ifndef RANGER_VERSION
-#define RANGER_VERSION "0.17.0"
+#ifndef SPRUCE_VERSION
+#define SPRUCE_VERSION "0.17.0"
 #endif

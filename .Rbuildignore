@@ -10,8 +10,8 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^ranger\.Rcheck$
-^ranger.*\.tar\.gz$
-^ranger.*\.tgz$
+^spruce\.Rcheck$
+^spruce.*\.tar\.gz$
+^spruce.*\.tgz$
 revdep/*
 ^\.vscode$

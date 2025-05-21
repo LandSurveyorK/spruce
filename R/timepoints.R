@@ -1,18 +1,18 @@
 # -------------------------------------------------------------------------------
-#   This file is part of Ranger.
+#   This file is part of Spruce.
 #
-# Ranger is free software: you can redistribute it and/or modify
+# Spruce is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Ranger is distributed in the hope that it will be useful,
+# Spruce is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Ranger. If not, see <http://www.gnu.org/licenses/>.
+# along with Spruce. If not, see <http://www.gnu.org/licenses/>.
 #
 # Written by:
 #
@@ -29,19 +29,19 @@
 ##' @export
 timepoints <- function(x, ...)  UseMethod("timepoints")
 
-##' Extract unique death times of Ranger Survival prediction object.
+##' Extract unique death times of Spruce Survival prediction object.
 ##'
 ##'
-##' @title Ranger timepoints
-##' @param x Ranger Survival prediction object.
+##' @title Spruce timepoints
+##' @param x Spruce Survival prediction object.
 ##' @param ... Further arguments passed to or from other methods.
 ##' @return Unique death times
-##' @seealso \code{\link{ranger}}
+##' @seealso \code{\link{spruce}}
 ##' @author Marvin N. Wright
 ##' @export
-timepoints.ranger.prediction <- function(x, ...) {
-  if (!inherits(x, "ranger.prediction")) {
-    stop("Object ist no ranger.prediction object.")
+timepoints.spruce.prediction <- function(x, ...) {
+  if (!inherits(x, "spruce.prediction")) {
+    stop("Object ist no spruce.prediction object.")
   }
   if (x$treetype != "Survival") {
     stop("No timepoints found. Object is no Survival prediction object.")
@@ -52,20 +52,20 @@ timepoints.ranger.prediction <- function(x, ...) {
   return(x$unique.death.times)
 }
 
-##' Extract unique death times of Ranger Survival forest
+##' Extract unique death times of Spruce Survival forest
 ##'
 ##'
-##' @title Ranger timepoints
-##' @param x Ranger Survival forest object.
+##' @title Spruce timepoints
+##' @param x Spruce Survival forest object.
 ##' @param ... Further arguments passed to or from other methods.
 ##' @return Unique death times
-##' @seealso \code{\link{ranger}}
+##' @seealso \code{\link{spruce}}
 ##' @author Marvin N. Wright
 ##' @aliases timepoints
 ##' @export
-timepoints.ranger <- function(x, ...) {
-  if (!inherits(x, "ranger")) {
-    stop("Object ist no ranger object.")
+timepoints.spruce <- function(x, ...) {
+  if (!inherits(x, "spruce")) {
+    stop("Object ist no spruce object.")
   }
   if (x$treetype != "Survival") {
     stop("No timepoints found. Object is no Survival forest.")

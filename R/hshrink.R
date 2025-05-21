@@ -1,18 +1,18 @@
 # -------------------------------------------------------------------------------
-#   This file is part of Ranger.
+#   This file is part of Spruce.
 #
-# Ranger is free software: you can redistribute it and/or modify
+# Spruce is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Ranger is distributed in the hope that it will be useful,
+# Spruce is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Ranger. If not, see <http://www.gnu.org/licenses/>.
+# along with Spruce. If not, see <http://www.gnu.org/licenses/>.
 #
 # Written by:
 #
@@ -29,18 +29,18 @@
 
 #' Hierarchical shrinkage
 #' 
-#' Apply hierarchical shrinkage to a ranger object. 
+#' Apply hierarchical shrinkage to a spruce object. 
 #' Hierarchical shrinkage is a regularization technique that recursively shrinks node predictions towards parent node predictions. 
 #' For details see Agarwal et al. (2022).
 #'
-#' @param rf ranger object, created with \code{node.stats = TRUE}. 
+#' @param rf spruce object, created with \code{node.stats = TRUE}. 
 #' @param lambda Non-negative shrinkage parameter. 
 #'
-#' @return The ranger object is modified in-place. 
+#' @return The spruce object is modified in-place. 
 #'
 #' @examples
 #' ## Hierarchical shrinkage for a probablity forest
-#' rf <- ranger(Species ~ ., iris, node.stats = TRUE, probability = TRUE)
+#' rf <- spruce(Species ~ ., iris, node.stats = TRUE, probability = TRUE)
 #' hshrink(rf, lambda = 5)
 ##' @references
 ##' \itemize{
@@ -50,7 +50,7 @@
 #' @export
 hshrink <- function(rf, lambda) {
   if (is.null(rf$forest$num.samples.nodes)) {
-    stop("Hierarchical shrinkage needs node statistics, set node.stats=TRUE in ranger() call.")
+    stop("Hierarchical shrinkage needs node statistics, set node.stats=TRUE in spruce() call.")
   }
   if (lambda < 0) {
     stop("Shrinkage parameter lambda has to be non-negative.")
@@ -77,11 +77,11 @@ hshrink <- function(rf, lambda) {
         lambda, 0, 0, parent_pred, cum_sum 
       )
       
-      # Assign temporary matrix values back to ranger object
+      # Assign temporary matrix values back to spruce object
       replace_class_counts(rf$forest$terminal.class.counts[[treeID]], class_freq)
     }))
   } else if (rf$treetype == "Classification") {
-    stop("To apply hierarchical shrinkage to classification forests, use probability=TRUE in the ranger() call.")
+    stop("To apply hierarchical shrinkage to classification forests, use probability=TRUE in the spruce() call.")
   } else if (rf$treetype == "Survival") {
     stop("Hierarchical shrinkage not yet implemented for survival.")
   } else {

@@ -1,12 +1,12 @@
 .Rproj.user
 .Rcheck
 .Rhistory
-ranger.Rcheck/
+spruce.Rcheck/
 *.Rproj
 .project
 .cproject
 docs
-ranger*.tar.gz
-ranger*.tgz
+spruce*.tar.gz
+spruce*.tgz
 revdep/*
 .vscode

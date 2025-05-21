@@ -4,39 +4,42 @@
  * This file has no copyright assigned and is placed in the Public Domain.
  * This file is a part of the w64 mingw-runtime package.
  *
- * The w64 mingw-runtime package and its code is distributed in the hope that it 
- * will be useful but WITHOUT ANY WARRANTY.  ALL WARRANTIES, EXPRESSED OR 
- * IMPLIED ARE HEREBY DISCLAIMED.  This includes but is not limited to 
+ * The w64 mingw-runtime package and its code is distributed in the hope that it
+ * will be useful but WITHOUT ANY WARRANTY.  ALL WARRANTIES, EXPRESSED OR
+ * IMPLIED ARE HEREBY DISCLAIMED.  This includes but is not limited to
  * warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 #define __GETOPT_H__
 
 /* All the headers include this file. */
-#include <crtdefs.h>
+// #include <crtdefs.h>
+// 1. Remove or Replace <crtdefs.h>
+// If this include is in getopt.h or another third-party file and you're on macOS or Linux, you should
 
-#if defined( WINGETOPT_SHARED_LIB )
-# if defined( BUILDING_WINGETOPT_DLL )
-#  define WINGETOPT_API __declspec(dllexport)
-# else
-#  define WINGETOPT_API __declspec(dllimport)
-# endif
+#if defined(WINGETOPT_SHARED_LIB)
+#if defined(BUILDING_WINGETOPT_DLL)
+#define WINGETOPT_API __declspec(dllexport)
 #else
-# define WINGETOPT_API
+#define WINGETOPT_API __declspec(dllimport)
+#endif
+#else
+#define WINGETOPT_API
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-WINGETOPT_API extern int optind;		/* index of first non-option in argv      */
-WINGETOPT_API extern int optopt;		/* single option character, as parsed     */
-WINGETOPT_API extern int opterr;		/* flag to enable built-in diagnostics... */
-				/* (user may set to zero, to suppress)    */
+  WINGETOPT_API extern int optind; /* index of first non-option in argv      */
+  WINGETOPT_API extern int optopt; /* single option character, as parsed     */
+  WINGETOPT_API extern int opterr; /* flag to enable built-in diagnostics... */
+                                   /* (user may set to zero, to suppress)    */
 
-WINGETOPT_API extern char *optarg;		/* pointer to argument of current option  */
+  WINGETOPT_API extern char *optarg; /* pointer to argument of current option  */
 
-extern int getopt(int nargc, char * const *nargv, const char *options);
+  extern int getopt(int nargc, char *const *nargv, const char *options);
 
 #ifdef _BSD_SOURCE
 /*
@@ -45,8 +48,8 @@ extern int getopt(int nargc, char * const *nargv, const char *options);
  * proclaim their BSD heritage, before including this header; however,
  * to maintain portability, developers are advised to avoid it.
  */
-# define optreset  __mingw_optreset
-extern int optreset;
+#define optreset __mingw_optreset
+  extern int optreset;
 #endif
 #ifdef __cplusplus
 }
@@ -66,28 +69,29 @@ extern int optreset;
 #define __GETOPT_LONG_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-struct option		/* specification for a long form option...	*/
-{
-  const char *name;		/* option name, without leading hyphens */
-  int         has_arg;		/* does it take an argument?		*/
-  int        *flag;		/* where to save its status, or NULL	*/
-  int         val;		/* its associated status value		*/
-};
+  struct option /* specification for a long form option...	*/
+  {
+    const char *name; /* option name, without leading hyphens */
+    int has_arg;      /* does it take an argument?		*/
+    int *flag;        /* where to save its status, or NULL	*/
+    int val;          /* its associated status value		*/
+  };
 
-enum    		/* permitted values for its `has_arg' field...	*/
-{
-  no_argument = 0,      	/* option never takes an argument	*/
-  required_argument,		/* option always requires an argument	*/
-  optional_argument		/* option may take an argument		*/
-};
+  enum /* permitted values for its `has_arg' field...	*/
+  {
+    no_argument = 0,   /* option never takes an argument	*/
+    required_argument, /* option always requires an argument	*/
+    optional_argument  /* option may take an argument		*/
+  };
 
-extern int getopt_long(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx);
-extern int getopt_long_only(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx);
+  extern int getopt_long(int nargc, char *const *nargv, const char *options,
+                         const struct option *long_options, int *idx);
+  extern int getopt_long_only(int nargc, char *const *nargv, const char *options,
+                              const struct option *long_options, int *idx);
 /*
  * Previous MinGW implementation had...
  */
@@ -95,7 +99,7 @@ extern int getopt_long_only(int nargc, char * const *nargv, const char *options,
 /*
  * ...for the long form API only; keep this for compatibility.
  */
-# define HAVE_DECL_GETOPT	1
+#define HAVE_DECL_GETOPT 1
 #endif
 
 #ifdef __cplusplus
