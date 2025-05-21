@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------------
- This file is part of ranger.
+ This file is part of spruce.
 
  Copyright (c) [2014-2018] [Marvin N. Wright]
 
  This software may be modified and distributed under the terms of the MIT license.
 
- Please note that the C++ core of ranger is distributed under MIT license and the
- R package "ranger" under GPL3 license.
+ Please note that the C++ core of spruce is distributed under MIT license and the
+ R package "spruce" under GPL3 license.
  #-------------------------------------------------------------------------------*/
 
 #ifndef FORESTSURVIVAL_H_
@@ -19,50 +19,53 @@
 #include "Forest.h"
 #include "TreeSurvival.h"
 
-namespace ranger {
+namespace spruce
+{
 
-class ForestSurvival: public Forest {
-public:
-  ForestSurvival() = default;
+  class ForestSurvival : public Forest
+  {
+  public:
+    ForestSurvival() = default;
 
-  ForestSurvival(const ForestSurvival&) = delete;
-  ForestSurvival& operator=(const ForestSurvival&) = delete;
+    ForestSurvival(const ForestSurvival &) = delete;
+    ForestSurvival &operator=(const ForestSurvival &) = delete;
 
-  virtual ~ForestSurvival() override = default;
+    virtual ~ForestSurvival() override = default;
 
-  void loadForest(size_t num_trees, std::vector<std::vector<std::vector<size_t>> >& forest_child_nodeIDs,
-      std::vector<std::vector<size_t>>& forest_split_varIDs, std::vector<std::vector<double>>& forest_split_values,
-      std::vector<std::vector<std::vector<double>> >& forest_chf, std::vector<double>& unique_timepoints,
-      std::vector<bool>& is_ordered_variable);
-  
-  void setUniqueTimepoints(const std::vector<double>& time_interest);
+    void loadForest(size_t num_trees, std::vector<std::vector<std::vector<size_t>>> &forest_child_nodeIDs,
+                    std::vector<std::vector<size_t>> &forest_split_varIDs, std::vector<std::vector<double>> &forest_split_values,
+                    std::vector<std::vector<std::vector<double>>> &forest_chf, std::vector<double> &unique_timepoints,
+                    std::vector<bool> &is_ordered_variable);
 
-  std::vector<std::vector<std::vector<double>>> getChf() const;
+    void setUniqueTimepoints(const std::vector<double> &time_interest);
 
-  const std::vector<double>& getUniqueTimepoints() const {
-    return unique_timepoints;
-  }
+    std::vector<std::vector<std::vector<double>>> getChf() const;
 
-private:
-  void initInternal() override;
-  void growInternal() override;
-  void allocatePredictMemory() override;
-  void predictInternal(size_t sample_idx) override;
-  void computePredictionErrorInternal() override;
-  void writeOutputInternal() override;
-  void writeConfusionFile() override;
-  void writePredictionFile() override;
-  void saveToFileInternal(std::ofstream& outfile) override;
-  void loadFromFileInternal(std::ifstream& infile) override;
+    const std::vector<double> &getUniqueTimepoints() const
+    {
+      return unique_timepoints;
+    }
 
-  std::vector<double> unique_timepoints;
-  std::vector<size_t> response_timepointIDs;
+  private:
+    void initInternal() override;
+    void growInternal() override;
+    void allocatePredictMemory() override;
+    void predictInternal(size_t sample_idx) override;
+    void computePredictionErrorInternal() override;
+    void writeOutputInternal() override;
+    void writeConfusionFile() override;
+    void writePredictionFile() override;
+    void saveToFileInternal(std::ofstream &outfile) override;
+    void loadFromFileInternal(std::ifstream &infile) override;
 
-private:
-  const std::vector<double>& getTreePrediction(size_t tree_idx, size_t sample_idx) const;
-  size_t getTreePredictionTerminalNodeID(size_t tree_idx, size_t sample_idx) const;
-};
+    std::vector<double> unique_timepoints;
+    std::vector<size_t> response_timepointIDs;
 
-} // namespace ranger
+  private:
+    const std::vector<double> &getTreePrediction(size_t tree_idx, size_t sample_idx) const;
+    size_t getTreePredictionTerminalNodeID(size_t tree_idx, size_t sample_idx) const;
+  };
+
+} // namespace spruce
 
 #endif /* FORESTSURVIVAL_H_ */

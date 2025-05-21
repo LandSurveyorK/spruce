@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------------
- This file is part of ranger.
+ This file is part of spruce.
 
  Copyright (c) [2014-2018] [Marvin N. Wright]
 
  This software may be modified and distributed under the terms of the MIT license.
 
- Please note that the C++ core of ranger is distributed under MIT license and the
- R package "ranger" under GPL3 license.
+ Please note that the C++ core of spruce is distributed under MIT license and the
+ R package "spruce" under GPL3 license.
  #-------------------------------------------------------------------------------*/
 
 #ifndef TREE_H_
@@ -20,126 +20,153 @@
 #include "globals.h"
 #include "Data.h"
 
-namespace ranger {
+namespace spruce
+{
 
-class Tree {
-public:
-  Tree();
+  class Tree
+  {
+  public:
+    Tree();
 
-  // Create from loaded forest
-  Tree(std::vector<std::vector<size_t>>& child_nodeIDs, std::vector<size_t>& split_varIDs,
-      std::vector<double>& split_values);
+    // Create from loaded forest
+    Tree(std::vector<std::vector<size_t>> &child_nodeIDs, std::vector<size_t> &split_varIDs,
+         std::vector<double> &split_values);
 
-  virtual ~Tree() = default;
+    virtual ~Tree() = default;
 
-  Tree(const Tree&) = delete;
-  Tree& operator=(const Tree&) = delete;
+    Tree(const Tree &) = delete;
+    Tree &operator=(const Tree &) = delete;
 
-  void init(const Data* data, uint mtry, size_t num_samples, uint seed, std::vector<size_t>* deterministic_varIDs,
-      std::vector<double>* split_select_weights, ImportanceMode importance_mode, std::vector<uint>* min_node_size, std::vector<uint>* min_bucket,
-      bool sample_with_replacement, bool memory_saving_splitting, SplitRule splitrule,
-      std::vector<double>* case_weights, std::vector<size_t>* manual_inbag, bool keep_inbag,
-      std::vector<double>* sample_fraction, double alpha, double minprop, double poisson_tau, bool holdout, uint num_random_splits,
-      uint max_depth, std::vector<double>* regularization_factor, bool regularization_usedepth,
-      std::vector<bool>* split_varIDs_used, bool save_node_stats);
+    void init(const Data *data, uint mtry, size_t num_samples, uint seed, std::vector<size_t> *deterministic_varIDs,
+              std::vector<double> *split_select_weights, ImportanceMode importance_mode, std::vector<uint> *min_node_size, std::vector<uint> *min_bucket,
+              bool sample_with_replacement, bool memory_saving_splitting, SplitRule splitrule,
+              std::vector<double> *case_weights, std::vector<size_t> *manual_inbag, bool keep_inbag,
+              std::vector<double> *sample_fraction, double alpha, double minprop, double poisson_tau, bool holdout, uint num_random_splits,
+              uint max_depth, std::vector<double> *regularization_factor, bool regularization_usedepth,
+              std::vector<bool> *split_varIDs_used, bool save_node_stats);
 
-  virtual void allocateMemory() = 0;
+    virtual void allocateMemory() = 0;
 
-  void grow(std::vector<double>* variable_importance);
+    void grow(std::vector<double> *variable_importance);
 
-  void predict(const Data* prediction_data, bool oob_prediction);
+    void predict(const Data *prediction_data, bool oob_prediction);
 
-  void computePermutationImportance(std::vector<double>& forest_importance, std::vector<double>& forest_variance,
-      std::vector<double>& forest_importance_casewise);
+    void computePermutationImportance(std::vector<double> &forest_importance, std::vector<double> &forest_variance,
+                                      std::vector<double> &forest_importance_casewise);
 
-  void appendToFile(std::ofstream& file);
-  virtual void appendToFileInternal(std::ofstream& file) = 0;
+    void appendToFile(std::ofstream &file);
+    virtual void appendToFileInternal(std::ofstream &file) = 0;
 
-  const std::vector<std::vector<size_t>>& getChildNodeIDs() const {
-    return child_nodeIDs;
-  }
-  const std::vector<double>& getSplitValues() const {
-    return split_values;
-  }
-  const std::vector<size_t>& getSplitVarIDs() const {
-    return split_varIDs;
-  }
+    const std::vector<std::vector<size_t>> &getChildNodeIDs() const
+    {
+      return child_nodeIDs;
+    }
+    const std::vector<double> &getSplitValues() const
+    {
+      return split_values;
+    }
+    const std::vector<size_t> &getSplitVarIDs() const
+    {
+      return split_varIDs;
+    }
 
-  const std::vector<size_t>& getOobSampleIDs() const {
-    return oob_sampleIDs;
-  }
-  size_t getNumSamplesOob() const {
-    return num_samples_oob;
-  }
+    const std::vector<size_t> &getOobSampleIDs() const
+    {
+      return oob_sampleIDs;
+    }
+    size_t getNumSamplesOob() const
+    {
+      return num_samples_oob;
+    }
 
-  const std::vector<size_t>& getInbagCounts() const {
-    return inbag_counts;
-  }
-  
-  const std::vector<size_t>& getNumSamplesNodes() const {
-    return num_samples_nodes;
-  }
-  const std::vector<double>& getNodePredictions() const {
-    return node_predictions;
-  }
-  const std::vector<double>& getSplitStats() const {
-    return split_stats;
-  }
+    const std::vector<size_t> &getInbagCounts() const
+    {
+      return inbag_counts;
+    }
 
-protected:
-  void createPossibleSplitVarSubset(std::vector<size_t>& result);
+    const std::vector<size_t> &getNumSamplesNodes() const
+    {
+      return num_samples_nodes;
+    }
+    const std::vector<double> &getNodePredictions() const
+    {
+      return node_predictions;
+    }
+    const std::vector<double> &getSplitStats() const
+    {
+      return split_stats;
+    }
 
-  bool splitNode(size_t nodeID);
-  virtual bool splitNodeInternal(size_t nodeID, std::vector<size_t>& possible_split_varIDs) = 0;
+  protected:
+    void createPossibleSplitVarSubset(std::vector<size_t> &result);
 
-  void createEmptyNode();
-  virtual void createEmptyNodeInternal() = 0;
+    bool splitNode(size_t nodeID);
+    virtual bool splitNodeInternal(size_t nodeID, std::vector<size_t> &possible_split_varIDs) = 0;
 
-  size_t dropDownSamplePermuted(size_t permuted_varID, size_t sampleID, size_t permuted_sampleID);
-  void permuteAndPredictOobSamples(size_t permuted_varID, std::vector<size_t>& permutations);
+    void createEmptyNode();
+    virtual void createEmptyNodeInternal() = 0;
 
-  virtual double computePredictionAccuracyInternal(std::vector<double>* prediction_error_casewise) = 0;
-  
-  void bootstrap();
-  void bootstrapWithoutReplacement();
+    size_t dropDownSamplePermuted(size_t permuted_varID, size_t sampleID, size_t permuted_sampleID);
+    void permuteAndPredictOobSamples(size_t permuted_varID, std::vector<size_t> &permutations);
 
-  void bootstrapWeighted();
-  void bootstrapWithoutReplacementWeighted();
+    virtual double computePredictionAccuracyInternal(std::vector<double> *prediction_error_casewise) = 0;
 
-  virtual void bootstrapClassWise();
-  virtual void bootstrapWithoutReplacementClassWise();
+    void bootstrap();
+    void bootstrapWithoutReplacement();
 
-  void setManualInbag();
+    void bootstrapWeighted();
+    void bootstrapWithoutReplacementWeighted();
 
-  virtual void cleanUpInternal() = 0;
+    virtual void bootstrapClassWise();
+    virtual void bootstrapWithoutReplacementClassWise();
 
-  void regularize(double& decrease, size_t varID) {
-    if (regularization) {
-      if (importance_mode == IMP_GINI_CORRECTED) {
-        varID = data->getUnpermutedVarID(varID);
-      }
-      if ((*regularization_factor)[varID] != 1) {
-        if (!(*split_varIDs_used)[varID]) {
-          if (regularization_usedepth) {
-            decrease *= std::pow((*regularization_factor)[varID], depth + 1);
-          } else {
-            decrease *= (*regularization_factor)[varID];
+    void setManualInbag();
+
+    virtual void cleanUpInternal() = 0;
+
+    void regularize(double &decrease, size_t varID)
+    {
+      if (regularization)
+      {
+        if (importance_mode == IMP_GINI_CORRECTED)
+        {
+          varID = data->getUnpermutedVarID(varID);
+        }
+        if ((*regularization_factor)[varID] != 1)
+        {
+          if (!(*split_varIDs_used)[varID])
+          {
+            if (regularization_usedepth)
+            {
+              decrease *= std::pow((*regularization_factor)[varID], depth + 1);
+            }
+            else
+            {
+              decrease *= (*regularization_factor)[varID];
+            }
           }
         }
       }
     }
-  }
 
-  void regularizeNegative(double& decrease, size_t varID) {
-      if (regularization) {
-        if (importance_mode == IMP_GINI_CORRECTED) {
+    void regularizeNegative(double &decrease, size_t varID)
+    {
+      if (regularization)
+      {
+        if (importance_mode == IMP_GINI_CORRECTED)
+        {
           varID = data->getUnpermutedVarID(varID);
         }
-        if ((*regularization_factor)[varID] != 1) {
-          if (!(*split_varIDs_used)[varID]) {
-            if (regularization_usedepth) {
+        if ((*regularization_factor)[varID] != 1)
+        {
+          if (!(*split_varIDs_used)[varID])
+          {
+            if (regularization_usedepth)
+            {
               decrease /= std::pow((*regularization_factor)[varID], depth + 1);
-            } else {
+            }
+            else
+            {
               decrease /= (*regularization_factor)[varID];
             }
           }
@@ -147,111 +174,116 @@ protected:
       }
     }
 
-  void saveSplitVarID(size_t varID) {
-    if (regularization) {
-      if (importance_mode == IMP_GINI_CORRECTED) {
-        (*split_varIDs_used)[data->getUnpermutedVarID(varID)] = true;
-      } else {
-        (*split_varIDs_used)[varID] = true;
+    void saveSplitVarID(size_t varID)
+    {
+      if (regularization)
+      {
+        if (importance_mode == IMP_GINI_CORRECTED)
+        {
+          (*split_varIDs_used)[data->getUnpermutedVarID(varID)] = true;
+        }
+        else
+        {
+          (*split_varIDs_used)[varID] = true;
+        }
       }
     }
-  }
 
-  uint mtry;
+    uint mtry;
 
-  // Number of samples (all samples, not only inbag for this tree)
-  size_t num_samples;
+    // Number of samples (all samples, not only inbag for this tree)
+    size_t num_samples;
 
-  // Number of OOB samples
-  size_t num_samples_oob;
+    // Number of OOB samples
+    size_t num_samples_oob;
 
-  // Minimum node size to split, nodes of smaller size can be produced
-  std::vector<uint>* min_node_size;
-  
-  // Minimum bucket size, minimum number of samples in each node
-  std::vector<uint>* min_bucket;
+    // Minimum node size to split, nodes of smaller size can be produced
+    std::vector<uint> *min_node_size;
 
-  // Weight vector for selecting possible split variables, one weight between 0 (never select) and 1 (always select) for each variable
-  // Deterministic variables are always selected
-  const std::vector<size_t>* deterministic_varIDs;
-  const std::vector<double>* split_select_weights;
+    // Minimum bucket size, minimum number of samples in each node
+    std::vector<uint> *min_bucket;
 
-  // Bootstrap weights
-  const std::vector<double>* case_weights;
+    // Weight vector for selecting possible split variables, one weight between 0 (never select) and 1 (always select) for each variable
+    // Deterministic variables are always selected
+    const std::vector<size_t> *deterministic_varIDs;
+    const std::vector<double> *split_select_weights;
 
-  // Pre-selected bootstrap samples
-  const std::vector<size_t>* manual_inbag;
+    // Bootstrap weights
+    const std::vector<double> *case_weights;
 
-  // Splitting variable for each node
-  std::vector<size_t> split_varIDs;
+    // Pre-selected bootstrap samples
+    const std::vector<size_t> *manual_inbag;
 
-  // Value to split at for each node, for now only binary split
-  // For terminal nodes the prediction value is saved here
-  std::vector<double> split_values;
+    // Splitting variable for each node
+    std::vector<size_t> split_varIDs;
 
-  // Vector of left and right child node IDs, 0 for no child, third value for default child
-  std::vector<std::vector<size_t>> child_nodeIDs;
+    // Value to split at for each node, for now only binary split
+    // For terminal nodes the prediction value is saved here
+    std::vector<double> split_values;
 
-  // All sampleIDs in the tree, will be re-ordered while splitting
-  std::vector<size_t> sampleIDs;
+    // Vector of left and right child node IDs, 0 for no child, third value for default child
+    std::vector<std::vector<size_t>> child_nodeIDs;
 
-  // For each node a vector with start and end positions
-  std::vector<size_t> start_pos;
-  std::vector<size_t> end_pos;
+    // All sampleIDs in the tree, will be re-ordered while splitting
+    std::vector<size_t> sampleIDs;
 
-  // IDs of OOB individuals, sorted
-  std::vector<size_t> oob_sampleIDs;
-  
-  // Node statistics
-  bool save_node_stats;
-  std::vector<size_t> num_samples_nodes;
-  std::vector<double> node_predictions;
-  std::vector<double> split_stats;
+    // For each node a vector with start and end positions
+    std::vector<size_t> start_pos;
+    std::vector<size_t> end_pos;
 
-  // Holdout mode
-  bool holdout;
+    // IDs of OOB individuals, sorted
+    std::vector<size_t> oob_sampleIDs;
 
-  // Inbag counts
-  bool keep_inbag;
-  std::vector<size_t> inbag_counts;
+    // Node statistics
+    bool save_node_stats;
+    std::vector<size_t> num_samples_nodes;
+    std::vector<double> node_predictions;
+    std::vector<double> split_stats;
 
-  // Random number generator
-  std::mt19937_64 random_number_generator;
+    // Holdout mode
+    bool holdout;
 
-  // Pointer to original data
-  const Data* data;
+    // Inbag counts
+    bool keep_inbag;
+    std::vector<size_t> inbag_counts;
 
-  // Regularization
-  bool regularization;
-  std::vector<double>* regularization_factor;
-  bool regularization_usedepth;
-  std::vector<bool>* split_varIDs_used;
-  
-  // Variable importance for all variables
-  std::vector<double>* variable_importance;
-  ImportanceMode importance_mode;
+    // Random number generator
+    std::mt19937_64 random_number_generator;
 
-  // When growing here the OOB set is used
-  // Terminal nodeIDs for prediction samples
-  std::vector<size_t> prediction_terminal_nodeIDs;
+    // Pointer to original data
+    const Data *data;
 
-  bool sample_with_replacement;
-  const std::vector<double>* sample_fraction;
+    // Regularization
+    bool regularization;
+    std::vector<double> *regularization_factor;
+    bool regularization_usedepth;
+    std::vector<bool> *split_varIDs_used;
 
-  bool memory_saving_splitting;
-  SplitRule splitrule;
-  double alpha;
-  double minprop;
-  double poisson_tau;
-  uint num_random_splits;
-  uint max_depth;
-  uint depth;
-  size_t last_left_nodeID;
-  
-  // Should NaNs go to right child for the current split?
-  bool nan_go_right;
-};
+    // Variable importance for all variables
+    std::vector<double> *variable_importance;
+    ImportanceMode importance_mode;
 
-} // namespace ranger
+    // When growing here the OOB set is used
+    // Terminal nodeIDs for prediction samples
+    std::vector<size_t> prediction_terminal_nodeIDs;
+
+    bool sample_with_replacement;
+    const std::vector<double> *sample_fraction;
+
+    bool memory_saving_splitting;
+    SplitRule splitrule;
+    double alpha;
+    double minprop;
+    double poisson_tau;
+    uint num_random_splits;
+    uint max_depth;
+    uint depth;
+    size_t last_left_nodeID;
+
+    // Should NaNs go to right child for the current split?
+    bool nan_go_right;
+  };
+
+} // namespace spruce
 
 #endif /* TREE_H_ */
